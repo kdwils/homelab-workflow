@@ -1,4 +1,4 @@
-name: Build Push Sign
+name: build push sign
 on:
   workflow_call:
     inputs:
