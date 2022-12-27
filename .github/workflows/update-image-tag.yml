@@ -1,0 +1,38 @@
+name: update image tag
+on:
+  workflow_call:
+    inputs:
+      deploy_repo:
+        required: true
+        type: string
+      environment:
+        required: false
+        type: string
+        default: Homelab
+
+permissions:
+  id-token: write
+
+jobs:
+  update_image_tag:
+    runs-on: ubuntu-latest
+    name: update deploy repo image tag
+    environment: ${{ inputs.environment }}
+    steps:
+      - name: checkout deploy repo
+        uses: actions/checkout@master
+        with:
+          repository: ${{ inputs.deploy_repo }}
+          ref: refs/heads/main
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: imranismail/setup-kustomize@v1
+
+      - run: |
+          cd base && kustomize edit set image myapp=${{ env.IMAGE_PATH }}:${{ github.SHA }} && cat kustomization.yaml
+
+      - run: |
+          git config --global user.name ${{ github.REPOSITORY_OWNER }}
+          git config --global user.email ${{ secrets.EMAIL }}
+          git commit -am "bump ${{ env.IMAGE_PATH }} image tag to ${{ github.SHA }}"
+          git push
