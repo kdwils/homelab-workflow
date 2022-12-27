@@ -2,7 +2,7 @@ name: cd
 on:
   workflow_call:
     inputs:
-      overlay_path:
+      overlay:
         required: false
         type: string
         default: homelab
@@ -27,7 +27,7 @@ jobs:
       - uses: imranismail/setup-kustomize@v1
 
       - run: |
-          kustomize build ${{ inputs.overlay_path }} -o kubernetes.yaml
+          kustomize build ${{ inputs.overlay }} -o kubernetes.yaml
 
       - name: kubectl apply
         uses: actions-hub/kubectl@master
