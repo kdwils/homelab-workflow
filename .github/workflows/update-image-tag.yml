@@ -16,10 +16,6 @@ on:
         type: string
         default: Homelab
 
-permissions:
-  contents: write
-  repository-projects: write
-
 env:
   IMAGE_PATH: ${{ inputs.registry }}/${{ inputs.image }}
 
