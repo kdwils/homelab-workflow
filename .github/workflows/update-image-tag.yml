@@ -17,8 +17,8 @@ on:
         default: Homelab
 
 permissions:
-  id-token: write
   contents: write
+  repository-projects: write
 
 env:
   IMAGE_PATH: ${{ inputs.registry }}/${{ inputs.image }}
