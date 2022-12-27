@@ -5,6 +5,12 @@ on:
       deploy_repo:
         required: true
         type: string
+      image:
+        required: true
+        type: string
+      registry:
+        required: true
+        type: string
       environment:
         required: false
         type: string
@@ -12,6 +18,9 @@ on:
 
 permissions:
   id-token: write
+
+env:
+  IMAGE_PATH: ${{ inputs.registry }}/${{ inputs.image }}
 
 jobs:
   update_image_tag:
