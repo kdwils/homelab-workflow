@@ -70,18 +70,10 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - uses: sigstore/cosign-installer@main
-        with:
-          cosign-release: "v1.13.1"
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@main
 
-      - name: Sign the published Docker image
-        if: github.event_name != 'pull_request'
+      - name: sign
+        run: cosign sign --yes ${TAGS}
         env:
-          COSIGN_EXPERIMENTAL: 1
-        run: cosign sign ${{ env.IMAGE_PATH }}@${{ steps.build-and-publish.outputs.digest }}
-
-      - name: verify the signed Docker image
-        if: github.event_name != 'pull_request'
-        env:
-          COSIGN_EXPERIMENTAL: 1
-        run: cosign verify --output text ${{ env.IMAGE_PATH }}:${{ github.SHA }}
+          TAGS: ${{ steps.docker_meta.outputs.tags }}
