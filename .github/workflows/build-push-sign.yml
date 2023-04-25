@@ -76,4 +76,4 @@ jobs:
       - name: sign
         run: cosign sign --yes ${TAGS}
         env:
-          TAGS: ${{ steps.docker_meta.outputs.tags }}
+          TAGS: ${{ steps.meta.outputs.tags }}
