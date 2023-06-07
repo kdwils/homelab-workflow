@@ -16,10 +16,6 @@ on:
         required: true
         type: string
         default: linux/amd64,linux/arm64,linux/arm
-      submodules:
-        required: false
-        type: boolean
-        default: false
 
 env:
   IMAGE_PATH: ${{ inputs.registry }}/${{ inputs.image }}
@@ -33,12 +29,8 @@ jobs:
     environment: ${{ inputs.environment }}
     steps:
       - uses: actions/checkout@v2
-        if: ${{ inputs.submodules }}
         with:
-          submodules: ${{ inputs.submodules }}
-
-      - uses: actions/checkout@v2
-        if: ${{ inputs.submodules }} != true
+          submodules: recursive
 
       - name: log in to ghcr
         uses: docker/login-action@v2
