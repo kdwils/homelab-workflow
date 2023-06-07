@@ -15,7 +15,7 @@ on:
       platforms:
         required: true
         type: string
-        default: linux/amd64,linux/arm64,linux/arm
+        default: linux/amd64,linux/arm64
 
 env:
   IMAGE_PATH: ${{ inputs.registry }}/${{ inputs.image }}
