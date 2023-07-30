@@ -16,9 +16,6 @@ on:
         required: false
         type: string
         default: linux/amd64,linux/arm64
-
-env:
-  IMAGE_PATH: ${{ inputs.registry }}/${{ inputs.image }}
 jobs:
   build_push_sign:
     permissions:
@@ -44,13 +41,8 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: |
-            ${{ env.IMAGE_PATH }}
-          tags: |
-            type=schedule
-            type=ref,event=branch
-            type=ref,event=pr
-            type=sha,format=long
+          images: ${{ inputs.registry }}/${{ inputs.image }}
+          tags: type=sha,format=long
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
