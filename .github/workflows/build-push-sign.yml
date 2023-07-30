@@ -50,7 +50,7 @@ jobs:
             type=schedule
             type=ref,event=branch
             type=ref,event=pr
-            type=sha
+            type=sha,format=long
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -78,6 +78,7 @@ jobs:
 
       - name: sign
         if: ${{ github.event_name != 'pull_request' }}
-        run: cosign sign --yes ${TAGS}
+        run: cosign sign --yes "${TAGS}@${DIGEST}"
         env:
-          TAGS: ${{ steps.meta.outputs.imageid }}
+          DIGEST: ${{ steps.build-and-publish.outputs.digest }}
+          TAGS: ${{ steps.meta.outputs.tags }}
