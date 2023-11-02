@@ -16,6 +16,10 @@ on:
         required: false
         type: string
         default: linux/amd64,linux/arm64
+      dockerfile:
+        required: false
+        type: string
+        default: Dockerfile
 jobs:
   build_push_sign:
     permissions:
@@ -55,6 +59,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
+          file: ${{ inputs.dockerfile }}
           push: ${{ github.event_name != 'pull_request' }}
           platforms: ${{ inputs.platforms }}
           labels: ${{ steps.meta.outputs.labels }}
