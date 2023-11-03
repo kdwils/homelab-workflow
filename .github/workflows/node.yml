@@ -2,6 +2,11 @@ name: Node
 
 on:
   workflow_call:
+    inputs:
+      config:
+        required: false
+        type: string
+        default: ""
 
 jobs:
   build:
@@ -12,5 +17,5 @@ jobs:
           with:
             node-version: 18
         - run: yarn install --frozen-lockfile
-        - run: yarn build:backend --config ../../app-config.yaml
+        - run: yarn build:backend --config ${{ inputs.config }}
 
