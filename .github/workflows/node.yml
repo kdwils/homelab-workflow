@@ -1,0 +1,16 @@
+name: Node
+
+on:
+  workflow_call:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+        - uses: actions/checkout@v4
+        - uses: actions/setup-node@v3
+          with:
+            node-version: 18
+        - run: yarn install --frozen-lockfile
+        - run: yarn build:backend --config ../../app-config.yaml
+
