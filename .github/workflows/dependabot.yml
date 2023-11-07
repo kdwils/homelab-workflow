@@ -1,6 +1,10 @@
 name: Dependabot auto-merge
 on:
   workflow_call:
+    inputs:
+      merge:
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -16,6 +20,7 @@ jobs:
         with:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
       - name: Enable auto-merge for Dependabot PRs
+        if: ${{ inputs.merge }}
         run: gh pr merge --auto --merge "$PR_URL"
         env:
           PR_URL: ${{github.event.pull_request.html_url}}
