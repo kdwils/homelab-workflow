@@ -35,7 +35,7 @@ jobs:
 
       - name: log in to ghcr
         uses: docker/login-action@v3
-        if: ${{ github.event_name != 'pull_request' }}
+        if: ${{ github.ref == 'refs/heads/main' }}
         with:
           registry: ${{ inputs.registry }}
           username: ${{ github.REPOSITORY_OWNER }}
