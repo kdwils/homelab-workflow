@@ -85,7 +85,7 @@ jobs:
 
       - name: sign
         if: ${{ github.event_name != 'pull_request' }}
-        run: cosign sign --yes --force "${TAGS}@${DIGEST}"
+        run: cosign sign --yes "${TAGS}@${DIGEST}"
         env:
           DIGEST: ${{ steps.build-and-publish.outputs.digest }}
           TAGS: ${{ env.TAGS }}
