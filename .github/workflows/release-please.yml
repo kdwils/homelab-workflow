@@ -13,6 +13,6 @@ jobs:
       - name: Release Please
         uses: googleapis/release-please-action@v4
         env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           release-type: simple
