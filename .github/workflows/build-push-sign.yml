@@ -69,9 +69,7 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           platforms: ${{ inputs.platforms }}
           labels: ${{ steps.meta.outputs.labels }}
-          tags: |
-            ${{ steps.meta.outputs.tags }}
-            ${{ inputs.registry }}/${{ inputs.image }}:latest
+          tags: ${{ steps.meta.outputs.tags }}
 
       - name: Install Cosign
         if: ${{ github.event_name != 'pull_request' }}
