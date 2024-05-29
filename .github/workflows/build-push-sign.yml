@@ -79,11 +79,13 @@ jobs:
 
       - name: prepare tags for signing
         id: prepare-tags
-        run: echo "TAGS=$(echo ${{ steps.meta.outputs.tags }},${{ inputs.registry }}/${{ inputs.image }}:latest | tr '\n' ',' | sed 's/,$//')" >> $GITHUB_ENV
+        run: |
+          TAGS=$(echo "${{ steps.meta.outputs.tags }} ${ inputs.registry }}/${{ inputs.image }}:latest" | tr ' ' ',')
+          echo "TAGS=${TAGS}" >> $GITHUB_ENV
 
       - name: sign
         if: ${{ github.event_name != 'pull_request' }}
-        run: cosign sign --yes "${TAGS}@${DIGEST}"
+        run: cosign sign --yes --force "${TAGS}@${DIGEST}"
         env:
           DIGEST: ${{ steps.build-and-publish.outputs.digest }}
-          TAGS: ${{ steps.prepare-tags.outputs.TAGS }}
+          TAGS: ${{ env.TAGS }}
