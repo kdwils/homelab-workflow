@@ -69,15 +69,21 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           platforms: ${{ inputs.platforms }}
           labels: ${{ steps.meta.outputs.labels }}
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: |
+            ${{ steps.meta.outputs.tags }}
+            ${{ inputs.registry }}/${{ inputs.image }}:latest
 
       - name: Install Cosign
         if: ${{ github.event_name != 'pull_request' }}
         uses: sigstore/cosign-installer@v3.4.0
+
+      - name: prepare tags for signing
+        id: prepare-tags
+        run: echo "TAGS=$(echo ${{ steps.meta.outputs.tags }},${{ inputs.registry }}/${{ inputs.image }}:latest | tr '\n' ',' | sed 's/,$//')" >> $GITHUB_ENV
 
       - name: sign
         if: ${{ github.event_name != 'pull_request' }}
         run: cosign sign --yes "${TAGS}@${DIGEST}"
         env:
           DIGEST: ${{ steps.build-and-publish.outputs.digest }}
-          TAGS: ${{ steps.meta.outputs.tags }}
+          TAGS: ${{ steps.prepare-tags.outputs.TAGS }}
