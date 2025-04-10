@@ -9,7 +9,7 @@ permissions:
   issues: write
 
 jobs:
-  docker:
+  push_tags:
     runs-on: ubuntu-latest
     steps:
       - name: Docker meta
