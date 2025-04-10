@@ -30,18 +30,11 @@ jobs:
           tags: |
             ${{ inputs.tags }}
 
-      - name: log in to ghcr
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ inputs.registry }}
-          username: ${{ github.REPOSITORY_OWNER }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Login to GHCR
         if: github.event_name != 'pull_request'
         uses: docker/login-action@v3
         with:
-          registry: ghcr.io
+          registry: ${{ inputs.registry }}
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
@@ -51,7 +44,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build and push
+      - name: Push Tag
         uses: docker/build-push-action@v6
         with:
           push: ${{ github.event_name != 'pull_request' }}
