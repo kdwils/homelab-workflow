@@ -2,11 +2,29 @@ name: Release Helm Charts
 
 on:
   workflow_call:
+    inputs:
+      publish_oci:
+        description: "Publish charts to OCI registry in addition to chart-releaser"
+        required: false
+        default: false
+        type: boolean
+      oci_registry:
+        description: "OCI registry to publish charts to"
+        required: false
+        default: "ghcr.io"
+        type: string
+      charts_dir:
+        description: "Directory containing helm charts"
+        required: false
+        default: "charts"
+        type: string
+
 jobs:
   release:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      packages: write
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -25,3 +43,23 @@ jobs:
         uses: helm/chart-releaser-action@v1.7.0
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: Login to OCI Registry
+        if: ${{ inputs.publish_oci }}
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | helm registry login ${{ inputs.oci_registry }} \
+            --username ${{ github.actor }} \
+            --password-stdin
+
+      - name: Package and Push Charts to OCI
+        if: ${{ inputs.publish_oci }}
+        run: |
+          mkdir -p /tmp/helm-charts
+          for chart in ${{ inputs.charts_dir }}/*/; do
+            if [ -f "${chart}Chart.yaml" ]; then
+              helm package "${chart}" --destination /tmp/helm-charts/
+            fi
+          done
+          for chart in /tmp/helm-charts/*.tgz; do
+            helm push "${chart}" oci://${{ inputs.oci_registry }}/${{ github.repository_owner }}
+          done
