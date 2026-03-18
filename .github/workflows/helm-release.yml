@@ -54,13 +54,17 @@ jobs:
 
       - name: Package and Push Charts to OCI
         if: ${{ inputs.publish_oci }}
+        env:
+          CHARTS_DIR: ${{ inputs.charts_dir }}
+          OCI_REGISTRY: ${{ inputs.oci_registry }}
         run: |
           mkdir -p /tmp/helm-charts
-          for chart in ${{ inputs.charts_dir }}/*/; do
+          for chart in "$CHARTS_DIR"/*/; do
             if [ -f "${chart}Chart.yaml" ]; then
               helm package "${chart}" --destination /tmp/helm-charts/
             fi
           done
           for chart in /tmp/helm-charts/*.tgz; do
-            helm push "${chart}" oci://${{ inputs.oci_registry }}/${{ github.repository_owner }}
+            [ -f "$chart" ] || continue
+            helm push "$chart" "oci://$OCI_REGISTRY/${{ github.repository_owner }}"
           done
