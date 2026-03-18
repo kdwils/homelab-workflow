@@ -25,7 +25,7 @@ on:
 jobs:
   build_push_docker_image:
     permissions:
-      contents: write   # needed to push git tags
+      contents: write # needed to push git tags
       packages: write
       id-token: write
     runs-on: ubuntu-latest
