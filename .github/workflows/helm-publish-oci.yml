@@ -36,18 +36,10 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Package and Push Charts
+      - name: Package and Push Chart
         env:
           CHARTS_DIR: ${{ inputs.charts_dir }}
           OCI_REGISTRY: ${{ inputs.oci_registry }}
         run: |
-          mkdir -p /tmp/helm-charts
-          for chart in "$CHARTS_DIR"/*/; do
-            if [ -f "${chart}Chart.yaml" ]; then
-              helm package "${chart}" --destination /tmp/helm-charts/
-            fi
-          done
-          for chart in /tmp/helm-charts/*.tgz; do
-            [ -f "$chart" ] || continue
-            helm push "$chart" "oci://$OCI_REGISTRY/${{ github.repository_owner }}"
-          done
+          helm package "$CHARTS_DIR" --destination /tmp/
+          helm push /tmp/*.tgz "oci://$OCI_REGISTRY/${{ github.repository_owner }}"
