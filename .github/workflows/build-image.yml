@@ -19,9 +19,9 @@ jobs:
       id-token: write
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
-          submodules: 'recursive'
+          submodules: "recursive"
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3.7.0
