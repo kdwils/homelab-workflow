@@ -59,4 +59,4 @@ jobs:
           OCI_REGISTRY: ${{ inputs.oci_registry }}
         run: |
           helm package "$CHARTS_DIR" --destination /tmp/
-          helm push /tmp/*.tgz "oci://$OCI_REGISTRY/${{ github.repository_owner }}"
+          helm push /tmp/*.tgz "oci://$OCI_REGISTRY/${{ github.repository_owner }}/charts"
