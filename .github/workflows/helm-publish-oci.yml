@@ -1,13 +1,8 @@
-name: Release Helm Charts
+name: Publish Helm Charts to OCI
 
 on:
   workflow_call:
     inputs:
-      publish_oci:
-        description: "Publish charts to OCI registry in addition to chart-releaser"
-        required: false
-        default: false
-        type: boolean
       oci_registry:
         description: "OCI registry to publish charts to"
         required: false
@@ -20,10 +15,10 @@ on:
         type: string
 
 jobs:
-  release:
+  publish:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: read
       packages: write
     steps:
       - name: Checkout
@@ -31,29 +26,17 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Configure Git
-        run: |
-          git config user.name "$GITHUB_ACTOR"
-          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
-
       - name: Install Helm
         uses: azure/setup-helm@v4
 
-      - name: Run chart-releaser
-        uses: helm/chart-releaser-action@v1.7.0
-        env:
-          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-
       - name: Login to OCI Registry
-        if: ${{ inputs.publish_oci }}
         uses: docker/login-action@v3
         with:
           registry: ${{ inputs.oci_registry }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Package and Push Charts to OCI
-        if: ${{ inputs.publish_oci }}
+      - name: Package and Push Charts
         run: |
           mkdir -p /tmp/helm-charts
           for chart in ${{ inputs.charts_dir }}/*/; do
